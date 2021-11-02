@@ -8,12 +8,29 @@ html,
 body
 {
     overflow: hidden;
+    background-color: black;
 }
 
+@font-face {
+    font-family: 'school_girl';
+    src: url('../fonts/CATHSGBR.woff') format('woff');
+  }
+
+.text {
+    z-index: -1;
+    font-size: 6.8vmin;;
+    color: thistle;
+    font-family: 'school_girl', sans-serif;
+}
+
+.text h1 {
+    color: thistle;
+}
 .webgl
 {
     position: fixed;
     top: 0;
     left: 0;
     outline: none;
+    z-index: 1;
 }
