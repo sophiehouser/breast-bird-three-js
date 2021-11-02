@@ -70,6 +70,12 @@ const milkStreamSpeed = {
 }
 
 /**
+ * Camera Rotation Speed
+ */
+var rotSpeedFront = .006
+var rotSpeedBack = .05
+
+/**
  * Base
  */
 // Canvas
@@ -77,79 +83,101 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
-scene.background = new THREE.Color( 0xff0000 );
+scene.background = new THREE.Color( 0x000000 );
+
+// Loading Manager
+const manager = new THREE.LoadingManager();
+
+manager.onLoad = function ( ) {
+	console.log( 'Loading complete!');
+};
+
+manager.onError = function ( url ) {
+	console.log( 'There was an error loading ' + url );
+};
+
+// GLTF Loader
+const gltfLoader = new GLTFLoader(manager);
 
 // Load Bird
-const gltfLoader = new GLTFLoader();
 const birdUrl = '/models/bird_2.gltf';
+
+var gltfBird;
 gltfLoader.load(birdUrl, (gltf) => {
-const root = gltf.scene;
-//var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
-var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
-root.traverse((o) => {
-  if (o.isMesh) o.material = newMaterial;
-});
-scene.add(root);
+    gltfBird = gltf.scene;
+
+    //var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
+    var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
+    gltfBird.traverse((o) => {
+    if (o.isMesh) o.material = newMaterial;
+    });
+
+    gltfBird.position.z = relativeCoordinates.x
+    gltfBird.position.y = relativeCoordinates.y
+
+    scene.add(gltfBird);
 });
 
 // Load Feeder
 const feederUrl = '/models/character.gltf';
+
+var gltfLeftFeeder;
 gltfLoader.load(feederUrl, (gltf) => {
-const root = gltf.scene;
-//var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
-var newMaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
-root.traverse((o) => {
-  if (o.isMesh) o.material = newMaterial;
+    const gltfLeftFeeder = gltf.scene;
+
+    var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
+    // var newMaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
+    gltfLeftFeeder.traverse((o) => {
+    if (o.isMesh) o.material = newMaterial;
+    });
+
+    gltfLeftFeeder.position.z = relativeCoordinates.x + 9
+    gltfLeftFeeder.position.y = relativeCoordinates.y + -9
+
+    scene.add(gltfLeftFeeder);
 });
-scene.add(root);
+
+var gltfRightFeeder;
+gltfLoader.load(feederUrl, (gltf) => {
+    const gltfRightFeeder = gltf.scene;
+
+    var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
+    // var newMaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
+    gltfRightFeeder.traverse((o) => {
+    if (o.isMesh) o.material = newMaterial;
+    });
+
+    gltfRightFeeder.position.z = relativeCoordinates.x - 9
+    gltfRightFeeder.position.y = relativeCoordinates.y + -9
+
+    scene.add(gltfRightFeeder);
+});
+
+var gltfMiddleFeeder;
+gltfLoader.load(feederUrl, (gltf) => {
+    const gltfMiddleFeeder = gltf.scene;
+
+    var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
+    // var newMaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
+    gltfMiddleFeeder.traverse((o) => {
+    if (o.isMesh) o.material = newMaterial;
+    });
+
+    gltfMiddleFeeder.scale.set(.75,.75,.75);
+    gltfMiddleFeeder.position.z = relativeCoordinates.x + 4
+    gltfMiddleFeeder.position.y = relativeCoordinates.y + -9 + (-.75)
+
+    scene.add(gltfMiddleFeeder);
 });
 
 // Light
-const light = new THREE.PointLight( 0x404040 ); // soft white light
+const light = new THREE.PointLight( 0x404040, 5 ); // soft white light
+// position the light
+light.position.set( 50, 50, 50 );
 scene.add( light );
 
 /**
- * Bird
- */
-const birdGeometry = new THREE.BoxGeometry(10, 2, 1)
-const birdMaterial = new THREE.MeshBasicMaterial({ map: colorTexture })
-const bird = new THREE.Mesh(birdGeometry, birdMaterial)
-bird.position.x = relativeCoordinates.x
-bird.position.y = relativeCoordinates.y
-scene.add(bird)
-
-/**
- * Feeder Left
- */
-const feederLeftGeometry = new THREE.BoxGeometry(feederLeftDetails.width, feederLeftDetails.height, 1)
-const feederLeftMaterial = new THREE.MeshBasicMaterial({ map: colorTexture })
-const feederLeft = new THREE.Mesh(feederLeftGeometry, feederLeftMaterial)
-feederLeft.position.x = relativeCoordinates.x + feederLeftDetails.offsetX
-feederLeft.position.y = relativeCoordinates.y + feederLeftDetails.offsetY
-scene.add(feederLeft)
-
-/**
- * Feeder Middle
- */
-const feederMiddleGeometry = new THREE.BoxGeometry(feederMiddleDetails.width, feederMiddleDetails.height, 1)
-const feederMiddleMaterial = new THREE.MeshBasicMaterial({ map: colorTexture })
-const feederMiddle = new THREE.Mesh(feederMiddleGeometry, feederMiddleMaterial)
-feederMiddle.position.x = relativeCoordinates.x + feederMiddleDetails.offsetX
-feederMiddle.position.y = relativeCoordinates.y + feederMiddleDetails.offsetY
-scene.add(feederMiddle)
-
-/**
- * Feeder Right
- */
-const feederRightGeometry = new THREE.BoxGeometry(feederRightDetails.width, feederRightDetails.height, 1)
-const feederRightMaterial = new THREE.MeshBasicMaterial({ map: colorTexture })
-const feederRight = new THREE.Mesh(feederRightGeometry, feederRightMaterial)
-feederRight.position.x = relativeCoordinates.x + feederRightDetails.offsetX
-feederRight.position.y = relativeCoordinates.y + feederRightDetails.offsetY
-scene.add(feederRight)
-
-/**
- * drop
+ * Drop object
  */
 class Drop {
     constructor(startX, startY, endY, speed, width, height) {
@@ -158,21 +186,48 @@ class Drop {
         this.endY = endY
         this.width = width
         this.height = height
-        this.dropGeometry = new THREE.BoxGeometry(width, height, 1)
-        this.dropMaterial = new THREE.MeshBasicMaterial({ map: colorTexture })
-        this.dropMesh = new THREE.Mesh(this.dropGeometry, this.dropMaterial)
-        this.dropMesh.position.x = startX 
-        this.dropMesh.position.y = startY 
-        scene.add(this.dropMesh)
+        // this.dropGeometry = new THREE.BoxGeometry(width, height, 1)
+        // this.dropMaterial = new THREE.MeshBasicMaterial({ map: colorTexture })
+        // this.dropMesh = new THREE.Mesh(this.dropGeometry, this.dropMaterial)
 
+        var gltfMiddleDrop;
+        const dropUrl = '/models/drop.gltf';
+        gltfLoader.load(dropUrl, (gltf) => {
+            gltfMiddleDrop = gltf.scene;
+
+            //var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
+            var newMaterial = new THREE.MeshBasicMaterial({color: 0xffffff});
+            gltfMiddleDrop.traverse((o) => {
+            if (o.isMesh) o.material = newMaterial;
+            });
+
+            gltfMiddleDrop.scale.set(.2,.2,.2);
+            gltfMiddleDrop.position.z = startX
+            gltfMiddleDrop.position.y = startY
+
+            scene.add(gltfMiddleDrop);
+        });
+    
         this.animate = function() {
-            if (this.dropMesh.position.y < this.endY) {
-                this.dropMesh.position.y = this.startY
+            if (gltfMiddleDrop) {
+                if (gltfMiddleDrop.position.y < this.endY) {
+                    gltfMiddleDrop.position.y = this.startY
+                }
+                gltfMiddleDrop.position.y -= this.speed
             }
-            this.dropMesh.position.y -= this.speed
         }
     }
 }
+
+// Create Drops
+
+var drops = []
+var dropLeft = new Drop(9, relativeCoordinates.y, -6, milkStreamSpeed.left, .5, .5)
+var dropMiddle = new Drop(3.75, relativeCoordinates.y, relativeCoordinates.y + -7, milkStreamSpeed.left, .5, .5)
+var dropRight = new Drop(-9, relativeCoordinates.y, -6, milkStreamSpeed.left, .5, .5)
+drops.push(dropLeft)
+drops.push(dropMiddle)
+drops.push(dropRight)
 
 /**
  * Sizes
@@ -201,10 +256,10 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 1
-camera.position.y = 1
-camera.position.z = 1
+const camera = new THREE.PerspectiveCamera(100, sizes.width / sizes.height, .01, 100)
+camera.position.x = 20
+camera.position.y = 5
+camera.position.z = 0
 scene.add(camera)
 
 // Controls
@@ -225,14 +280,6 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
  */
 const clock = new THREE.Clock()
 
-var drops = []
-var dropLeft = new Drop(feederLeft.position.x, bird.position.y, feederLeft.position.y, milkStreamSpeed.left, .5, .5)
-var dropMiddle = new Drop(feederMiddle.position.x, bird.position.y, feederLeft.position.y, milkStreamSpeed.left, .5, .5)
-var dropRight = new Drop(feederRight.position.x, bird.position.y, feederLeft.position.y, milkStreamSpeed.left, .5, .5)
-drops.push(dropLeft)
-drops.push(dropMiddle)
-drops.push(dropRight)
-
 function animateLeftDropStream(drops) {
     drops.forEach((drop) => {
         drop.animate() // 100, 200, 300
@@ -240,7 +287,6 @@ function animateLeftDropStream(drops) {
 }
 
 function spawnDrops(elapsedTime) {
-    console.log(elapsedTime)
     if (elapsedTime > 2) {
         let newDrop = new Drop(feederLeft.position.x + 10, bird.position.y, feederLeft.position.y, milkStreamSpeed.left)
         drops.push(newDrop)
@@ -248,15 +294,35 @@ function spawnDrops(elapsedTime) {
     }
 }
 
+var formerCameraZ = camera.position.z
+function checkRotation(){
+    let speed = rotSpeedFront
+
+    var x = camera.position.x,
+    y = camera.position.y,
+    z = camera.position.z;
+
+    if (z > formerCameraZ) {
+        speed = rotSpeedBack
+    }
+    formerCameraZ = z
+
+    camera.position.x = x * Math.cos(speed) + z * Math.sin(speed);
+    camera.position.z = z * Math.cos(speed) - x * Math.sin(speed);
+
+    camera.lookAt(scene.position);
+  }
+
 const tick = () =>
 {
     // Update controls
     controls.update()
 
+    checkRotation()
     // Animate drop
-    spawnDrops(clock.getElapsedTime())
+    //spawnDrops(clock.getElapsedTime())
     animateLeftDropStream(drops)
-    //myDrop.animate(bird.position.y, feederLeft.position.y)
+    //dropLeft.animate(bird.position.y, feederLeft.position.y)
 
     // Render
     renderer.render(scene, camera)
