@@ -2,6 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import Typed from 'typed.js';
 
 // Textures
 const image = new Image()
@@ -83,7 +84,7 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
-scene.background = new THREE.Color( 0x000000 );
+//scene.background = new THREE.Color( 0x000000 );
 
 // Loading Manager
 const manager = new THREE.LoadingManager();
@@ -270,7 +271,8 @@ controls.enableDamping = true
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    alpha: true
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -295,7 +297,7 @@ function spawnDrops(elapsedTime) {
 }
 
 var formerCameraZ = camera.position.z
-function checkRotation(){
+function checkRotation() {
     let speed = rotSpeedFront
 
     var x = camera.position.x,
@@ -311,7 +313,12 @@ function checkRotation(){
     camera.position.z = z * Math.cos(speed) - x * Math.sin(speed);
 
     camera.lookAt(scene.position);
-  }
+}
+
+var typed = new Typed('.text', {
+    strings: ["ive been thinking about this titty bird and finding that interesting to imagine. it's forced to pump out milk to feed these unaware hungry characters that always want more. and the bird wants to be hot or sexy but it's forced to use its sexual body parts, its titties, to do this sad horrible act of eternal feeding. and that makes its desire to be sexy feel almost pitiful when i imagine it. like it wants to be viewed as sexual, but for a viewer to see it sexually would make them feel wrong or pity. poor titty bird :((. i don't know why my imagination has gone here because it's not how im feeling about myself."],
+    typeSpeed: 30
+});
 
 const tick = () =>
 {
