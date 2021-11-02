@@ -70,6 +70,12 @@ const milkStreamSpeed = {
 }
 
 /**
+ * Camera Rotation Speed
+ */
+var rotSpeedFront = .006
+var rotSpeedBack = .05
+
+/**
  * Base
  */
 // Canvas
@@ -77,7 +83,7 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
-scene.background = new THREE.Color( 0xff0000 );
+scene.background = new THREE.Color( 0x000000 );
 
 // Loading Manager
 const manager = new THREE.LoadingManager();
@@ -165,7 +171,9 @@ gltfLoader.load(feederUrl, (gltf) => {
 });
 
 // Light
-const light = new THREE.PointLight( 0x404040 ); // soft white light
+const light = new THREE.PointLight( 0x404040, 5 ); // soft white light
+// position the light
+light.position.set( 50, 50, 50 );
 scene.add( light );
 
 /**
@@ -248,10 +256,10 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(100, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 1
-camera.position.y = 1
-camera.position.z = 1
+const camera = new THREE.PerspectiveCamera(100, sizes.width / sizes.height, .01, 100)
+camera.position.x = 20
+camera.position.y = 5
+camera.position.z = 0
 scene.add(camera)
 
 // Controls
@@ -286,11 +294,31 @@ function spawnDrops(elapsedTime) {
     }
 }
 
+var formerCameraZ = camera.position.z
+function checkRotation(){
+    let speed = rotSpeedFront
+
+    var x = camera.position.x,
+    y = camera.position.y,
+    z = camera.position.z;
+
+    if (z > formerCameraZ) {
+        speed = rotSpeedBack
+    }
+    formerCameraZ = z
+
+    camera.position.x = x * Math.cos(speed) + z * Math.sin(speed);
+    camera.position.z = z * Math.cos(speed) - x * Math.sin(speed);
+
+    camera.lookAt(scene.position);
+  }
+
 const tick = () =>
 {
     // Update controls
     controls.update()
 
+    checkRotation()
     // Animate drop
     //spawnDrops(clock.getElapsedTime())
     animateLeftDropStream(drops)

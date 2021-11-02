@@ -1,0 +1,41 @@
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+@font-face {
+    font-family: houseOfFun;
+    src:  url(assets/fonts/634031f94c265d1f95ffb1e7eb9a4cce.woff)
+}
+
+@font-face {
+    font-family: y2kFriendlyFuture;
+    src:  url(assets/fonts/bd2bc9ec7e9f58fec341a005c6f9badd.woff)
+}
+
+html,
+body
+{
+    overflow: hidden;
+    background-color: black;
+}
+
+.webgl
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+    background-image: url(assets/images/09e612f7a78ba7540ecf132134271fba.gif);
+    background-size: cover;
+}
+
+marquee {
+    color: white;
+    font-size: 10em;
+    font-family: y2kFriendlyFuture;
+}
+
+
+/*# sourceMappingURL=main.css.map*/
